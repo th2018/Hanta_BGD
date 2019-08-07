@@ -1,0 +1,125 @@
+
+#load packages
+```{r}
+library("foreign")
+```
+
+#read Pantheria, the IUCN terrestrial mammal map, and the reservoir table
+```{r}
+pantheria<-read.csv("C:/Users/huangt/Downloads/PanTHERIA_1-0_WR05_Aug2008.txt",header=T,sep="\t")
+
+TM<-read.dbf("C:/Users/huangt/Documents/TERRESTRIAL_MAMMALS_201901-20190604T200611Z-001/TERRESTRIAL_MAMMALS_201901/TERRESTRIAL_MAMMALS.dbf")
+
+allmammGID<-read.csv("C:/Users/huangt/Downloads/allmammGID-clean.csv")
+#to make the species name consistent
+allmammGID$spp2<-gsub("_"," ",allmammGID$Spp)
+
+```
+
+#subset to rodent and insectivore
+```{r}
+RS<-pantheria[pantheria$MSW05_Order=="Rodentia"|pantheria$MSW05_Order=="Soricomorpha" ,]
+dim(RS)
+#check the list of rodents and insectivores that are not in the IUCN map
+RS_not_in_TM<-RS[RS$MSW05_Binomial%in%TM$binomial==F ,]
+dim(unique(RS_not_in_TM))
+```
+
+
+#read the IUCN mammalM in BGD
+```{r}
+
+Rodentia_Soricomorpha_BGD<-read.dbf("C:/Users/huangt/Documents/Rodentia_Soricomorpha_BGD.dbf")
+
+TM_BGD_D<-read.dbf("C:/Users/huangt/Documents/TERRESTRIAL_MAMMALS_201901-20190604T200611Z-001/TERRESTRIAL_MAMMALS_201901/TM_BGD_D.dbf")
+
+
+
+U<-read.dbf("C:/Users/huangt/Documents/union_BGD.dbf")
+
+U2<-read.dbf("C:/Users/huangt/Documents/RS_D_HANTA_U01.dbf")
+
+
+
+
+
+EltonTraits<-read.csv("C:/Users/huangt/Downloads/MamFuncDat.txt",header=T,sep="\t")
+
+Sylhet_RS_D<-read.dbf("C:/Users/huangt/Documents/Sylhet_RS_D.dbf")
+
+```
+
+```{r}
+
+```
+
+
+```{r}
+Rodentia_Soricomorpha_BGD_GID<-merge(Rodentia_Soricomorpha_BGD,allmammGID[,c("Label","Order", "Zoonoses","spp2")], by.x="MSW05_Bino", by.y= "spp2" )
+Rodentia_Soricomorpha_BGD_GID$Bangladesh<-1
+dim(Rodentia_Soricomorpha_BGD_GID)
+Sylhet_RS_D$Sylhet<-1
+Rodentia_Soricomorpha_BGD_Sylhet_RS_D_GID<-merge(Rodentia_Soricomorpha_BGD_GID,Sylhet_RS_D, by.x= "MSW05_Bino" , by.y=  "MSW05_Bino",all=T)
+dim(Rodentia_Soricomorpha_BGD_Sylhet_RS_D_GID)
+write.csv(Rodentia_Soricomorpha_BGD_Sylhet_RS_D_GID,file="C:/Users/huangt/Documents/Rodentia_Soricomorpha_BGD_Sylhet_GID.csv")
+```
+
+```{r}
+RS_BGD_hanta<-Rodentia_Soricomorpha_BGD_Sylhet_RS_D_GID[Rodentia_Soricomorpha_BGD_Sylhet_RS_D_GID$Zoonoses=="Hantavirus infection - Old World"|Rodentia_Soricomorpha_BGD_Sylhet_RS_D_GID$Zoonoses== "Hantavirus pulmonary syndrome",]
+write.csv(RS_BGD_hanta,file="C:/Users/huangt/Documents/RS_BGD_hanta.csv")
+
+```
+
+```{r}
+head(U2)
+U2$ct<-1
+agg = aggregate(U2$ct,
+                by = list( U2$Shape_Leng ),
+                FUN = sum)
+class(agg)
+write.csv(agg,file="C:/Users/huangt/Documents/agg.csv")
+```
+
+
+
+
+```{r}
+#SUBSET TO RODENT AND INSECTIVORE
+allmammGID_RS<-allmammGID[  allmammGID$spp2 %in% RS$MSW05_Binomial ,]
+#Hantavirus infection - Old World               Hantavirus pulmonary syndrome 
+allmammGID_RS_H<-allmammGID_RS[ allmammGID_RS$Zoonoses=="Hantavirus infection - Old World"|allmammGID_RS$Zoonoses=="Hantavirus pulmonary syndrome" ,]
+
+```
+
+<!-- ```{r} -->
+<!-- allmammGID_RS_H[ allmammGID_RS_H$spp2%in%TM$binomial==F ,] -->
+<!-- #Oryzomys angouya IS NOT IN BGD -->
+<!-- TM_BGD_D[ TM_BGD_D$binomial%in%allmammGID_RS_H$spp2==F ,] -->
+
+<!-- ``` -->
+
+```{r}
+#hanta rodent insectivore in BGD
+TM_BGD_D_H<-TM_BGD_D[   TM_BGD_D$binomial%in%allmammGID_RS_H$spp2==T,]
+TM_BGD_D_H_m<-merge(TM_BGD_D,allmammGID_RS_H,by.x= "binomial" ,by.y= "spp2"  )
+write.csv(TM_BGD_D_H,file="C:/Users/huangt/Documents/TM_BGD_D_H.csv")
+write.csv(unique(TM_BGD_D_H_m[,c("binomial","Order")]) ,file="C:/Users/huangt/Documents/TM_BGD_D_H_mu.csv")
+```
+
+```{r}
+head(U)
+U$ct<-1
+agg = aggregate(U$ct,
+                by = list(U$Shape_Area ),
+                FUN = sum)
+class(agg)
+write.csv(agg,file="C:/Users/huangt/Documents/agg.csv")
+```
+
+
+
+
+
+
+
+
