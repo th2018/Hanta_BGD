@@ -43,7 +43,7 @@ U2<-read.dbf("C:/Users/huangt/Documents/RS_D_HANTA_U01.dbf")
 
 
 
-EltonTraits<-read.csv("C:/Users/huangt/Downloads/MamFuncDat.txt",header=T,sep="\t")
+ 
 
 Sylhet_RS_D<-read.dbf("C:/Users/huangt/Documents/Sylhet_RS_D.dbf")
 
@@ -53,7 +53,7 @@ Sylhet_RS_D<-read.dbf("C:/Users/huangt/Documents/Sylhet_RS_D.dbf")
 
 ```
 
-
+#to get the zoonotic rodents and soricomorpha, metge the tables
 ```{r}
 Rodentia_Soricomorpha_BGD_GID<-merge(Rodentia_Soricomorpha_BGD,allmammGID[,c("Label","Order", "Zoonoses","spp2")], by.x="MSW05_Bino", by.y= "spp2" )
 Rodentia_Soricomorpha_BGD_GID$Bangladesh<-1
