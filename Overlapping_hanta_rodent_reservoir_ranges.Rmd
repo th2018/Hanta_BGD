@@ -1,0 +1,31 @@
+---
+title: "Overlapping hanta rodent reservoir ranges in Bangladesh"
+output: html_document
+---
+
+#to subset Pantheria to Rodent and Soricomorpha
+```{r}
+pantheria<-read.csv("C:/Users/huangt/Downloads/PanTHERIA_1-0_WR05_Aug2008.txt",header=T,sep="\t")
+RS<-pantheria[pantheria$MSW05_Order=="Rodentia"|pantheria$MSW05_Order=="Soricomorpha" ,]
+```
+
+#to read mammal-disease table
+```{r}
+allmammGID<-read.csv("C:/Users/huangt/Downloads/allmammGID-clean.csv")
+#to make the species name consistent with Pantheria
+allmammGID$spp2<-gsub("_"," ",allmammGID$Spp)
+```
+
+#find Hanta RODENT AND INSECTIVORE RESERVOIRS
+```{r}
+#SUBSET TO RODENT AND INSECTIVORE
+allmammGID_RS<-allmammGID[  allmammGID$spp2 %in% RS$MSW05_Binomial ,]
+#Hantavirus infection - Old World & Hantavirus pulmonary syndrome RESERVOIRS
+allmammGID_RS_H<-allmammGID_RS[ allmammGID_RS$Zoonoses=="Hantavirus infection - Old World"|allmammGID_RS$Zoonoses=="Hantavirus pulmonary syndrome" ,]
+```
+
+#read the IUCN mammals in Bangladesh
+```{r}
+TM_BGD_D<-read.dbf("C:/Users/huangt/Documents/TERRESTRIAL_MAMMALS_201901-20190604T200611Z-001/TERRESTRIAL_MAMMALS_201901/TM_BGD_D.dbf")
+```
+
