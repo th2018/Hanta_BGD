@@ -3,6 +3,12 @@ title: "Overlapping hanta rodent reservoir ranges in Bangladesh"
 output: html_document
 ---
 
+#load the library
+```{r}
+library(foreign)
+```
+
+
 #to subset Pantheria to Rodent and Soricomorpha
 ```{r}
 pantheria<-read.csv("C:/Users/huangt/Downloads/PanTHERIA_1-0_WR05_Aug2008.txt",header=T,sep="\t")
@@ -24,8 +30,12 @@ allmammGID_RS<-allmammGID[  allmammGID$spp2 %in% RS$MSW05_Binomial ,]
 allmammGID_RS_H<-allmammGID_RS[ allmammGID_RS$Zoonoses=="Hantavirus infection - Old World"|allmammGID_RS$Zoonoses=="Hantavirus pulmonary syndrome" ,]
 ```
 
-#read the IUCN mammals in Bangladesh
+#read the list of IUCN mammals in Bangladesh
 ```{r}
 TM_BGD_D<-read.dbf("C:/Users/huangt/Documents/TERRESTRIAL_MAMMALS_201901-20190604T200611Z-001/TERRESTRIAL_MAMMALS_201901/TM_BGD_D.dbf")
+TM<-read.dbf("C:/Users/huangt/Documents/TERRESTRIAL_MAMMALS_201901-20190604T200611Z-001/TERRESTRIAL_MAMMALS_201901/TERRESTRIAL_MAMMALS.dbf")
+#check if there are species not in Hanta rodent and soricomorpha due to name mismatch
+allmammGID_RS_H[allmammGID_RS_H$spp2 %in% TM$binomial==F ,]
+#Oryzomys angouya is not in BGD so that's ok
 ```
 
